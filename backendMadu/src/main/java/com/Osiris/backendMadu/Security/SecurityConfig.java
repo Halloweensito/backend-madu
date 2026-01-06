@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,10 +24,12 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    // 1. INYECCIÓN DE LA VARIABLE DESDE PROPERTIES
     @Value("${cors.allowed-origins}")
     private List<String> allowedOrigins;
 
+    // ----------------------------
+    // Seguridad HTTP principal
+    // ----------------------------
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -33,42 +37,37 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 2. REGLAS DE SEGURIDAD (Orden Crítico)
-
-                        // A. PRIMERO: Protege explícitamente las rutas de administración
-                        // Si no haces esto, /{slug} podría dejar ver /admin
+                        // Rutas admin protegidas
                         .requestMatchers("/api/products/admin/**").authenticated()
                         .requestMatchers("/api/categories/admin/**").authenticated()
+                        .requestMatchers("/api/home/admin").authenticated()
 
-                        // B. SEGUNDO: Rutas Públicas Específicas
+                        // Rutas públicas
                         .requestMatchers(HttpMethod.GET, "/api/products/store/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/search").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/category/**").permitAll()
-
-                        // C. TERCERO: Comodines Públicos (Slugs)
-                        // Esto debe ir DESPUÉS de proteger /admin
                         .requestMatchers(HttpMethod.GET, "/api/products/{slug}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/store/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/slug/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/home/store").permitAll()
-
-                        // E. Actuator Health para Render
                         .requestMatchers("/actuator/health").permitAll()
 
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+                        .jwt(jwt -> jwt
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                        ));
 
         return http.build();
     }
 
+    // ----------------------------
+    // CORS
+    // ----------------------------
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-
-        // Aquí usamos la variable inyectada arriba
         config.setAllowedOrigins(allowedOrigins);
-
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -78,10 +77,23 @@ public class SecurityConfig {
         return source;
     }
 
+    // ----------------------------
+    // JWT Decoder usando JWK de Supabase
+    // ----------------------------
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder
+                .withJwkSetUri("https://zlhzxveqleycwyssdtio.supabase.co/auth/v1/.well-known/jwks.json")
+                .build();
+    }
+
+    // ----------------------------
+    // Roles desde app_metadata.roles
+    // ----------------------------
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("role");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("app_metadata.roles"); // Claim real de Supabase
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
 
         JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
