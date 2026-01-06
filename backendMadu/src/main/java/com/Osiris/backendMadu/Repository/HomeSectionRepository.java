@@ -33,6 +33,15 @@ public interface HomeSectionRepository extends JpaRepository<HomeSection, Long> 
     // 🛠️ PARA EL ADMIN (PANEL)
     // ==========================================
 
+    @Query("""
+       SELECT DISTINCT s FROM HomeSection s
+       LEFT JOIN FETCH s.items i
+       LEFT JOIN FETCH i.product p
+       LEFT JOIN FETCH i.category c
+       ORDER BY s.position ASC, i.position ASC
+       """)
+    List<HomeSection> findAllWithDetailsForAdmin();
+
     // Para la lista de gestión (no necesitamos traer todos los productos pesados aquí)
     List<HomeSection> findAllByOrderByPositionAsc();
 

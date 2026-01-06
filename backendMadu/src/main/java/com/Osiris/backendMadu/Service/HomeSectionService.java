@@ -43,7 +43,7 @@ public class HomeSectionService {
     }
 
     public List<HomeSectionResponse> getAllSectionsForAdmin() {
-        return sectionRepository.findAllByOrderByPositionAsc().stream()
+        return sectionRepository.findAllWithDetailsForAdmin().stream()
                 .map(mapper::toResponse)
                 .toList();
     }
