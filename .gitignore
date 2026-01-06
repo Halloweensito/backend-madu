@@ -1,0 +1,9 @@
+# IDE Files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# OS Files
+.DS_Store
+Thumbs.db

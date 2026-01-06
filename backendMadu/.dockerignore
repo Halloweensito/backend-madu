@@ -1,0 +1,27 @@
+# Build artifacts
+build/
+.gradle/
+bin/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+HELP.md
+
+# Test files
+src/test/
+
+# Local environment files
+*.env
+*.local
