@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -77,15 +78,6 @@ public class SecurityConfig {
         return source;
     }
 
-    // ----------------------------
-    // JWT Decoder usando JWK de Supabase
-    // ----------------------------
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder
-                .withJwkSetUri("https://zlhzxveqleycwyssdtio.supabase.co/auth/v1/.well-known/jwks.json")
-                .build();
-    }
 
     // ----------------------------
     // Roles desde app_metadata.roles
@@ -93,11 +85,19 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("app_metadata.roles"); // Claim real de Supabase
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("app_metadata.roles");
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
 
         JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
         jwtConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return jwtConverter;
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder
+                .withJwkSetUri("https://zlhzxveqleycwyssdtio.supabase.co/auth/v1/.well-known/jwks.json")
+                .jwsAlgorithm(SignatureAlgorithm.ES256)
+                .build();
     }
 }
