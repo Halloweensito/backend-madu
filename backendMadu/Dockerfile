@@ -5,18 +5,18 @@ FROM eclipse-temurin:21-jdk-alpine AS builder
 
 WORKDIR /app
 
-# Copy gradle wrapper and build files
+# Copia los archivos de configuración de Gradle
 COPY gradle gradle
 COPY gradlew build.gradle settings.gradle ./
 
-# Download dependencies (cached layer)
+# Descarga dependencias (aprovecha la caché de Docker)
 RUN chmod +x gradlew && ./gradlew dependencies --no-daemon
 
-# Copy source code
+# Copia el código fuente
 COPY src src
 
-# Build the application
-RUN ./gradlew build -x test --no-daemon
+# Construye la aplicación (omitiendo tests para builds más rápidos en prod)
+RUN ./gradlew bootJar --no-daemon -x test
 
 # ================================
 # Runtime stage
@@ -25,24 +25,23 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
-# Create non-root user for security
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
+# Crear un usuario no-root por seguridad (recomendado)
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
 
-# Copy the built jar from builder stage
+# Copia el JAR construido
 COPY --from=builder /app/build/libs/*.jar app.jar
 
-# Change ownership to non-root user
-RUN chown -R appuser:appgroup /app
+# Configuración explícita para Render
+# Render define la variable PORT automáticamente.
+# Usamos 'sh -c' para permitir la expansión de la variable ${PORT} al arrancar.
+ENV PORT=8080
+EXPOSE ${PORT}
 
-USER appuser
+# Health check (ajustado para usar la variable de entorno)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT}/actuator/health || exit 1
 
-# Expose the application port
-EXPOSE 8080
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
-
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# ENTRYPOINT DINÁMICO
+# Esto asigna el puerto de Render a la propiedad server.port de Spring
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT} -jar app.jar"]
