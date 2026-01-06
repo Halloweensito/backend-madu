@@ -25,11 +25,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class HomeSectionService {
 
     private final HomeSectionRepository sectionRepository;
-    private final ProductRepository productRepository;  // ✅ Necesario para buscar productos
-    private final CategoryRepository categoryRepository; // ✅ Necesario para buscar categorías
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
     private final HomeSectionMapper mapper;
 
 
@@ -94,13 +95,10 @@ public class HomeSectionService {
         return mapper.toResponse(sectionRepository.save(section));
     }
 
-    // @CacheEvict(value = "home_sections", allEntries = true)
     @Transactional
     public void reorderSections(List<ReorderRequest> reorderList) {
         for (ReorderRequest item : reorderList) {
-            sectionRepository.findById(item.getId()).ifPresent(section -> {
-                section.setPosition(item.getPosition());
-            });
+            sectionRepository.findById(item.getId()).ifPresent(section -> section.setPosition(item.getPosition()));
         }
     }
 
