@@ -1,5 +1,6 @@
-package com.Osiris.backendMadu.DTO;
+package com.Osiris.backendMadu.DTO.AttributeValue;
 
+import com.Osiris.backendMadu.DTO.Attribute.AttributeInfo;
 import lombok.Data;
 
 @Data

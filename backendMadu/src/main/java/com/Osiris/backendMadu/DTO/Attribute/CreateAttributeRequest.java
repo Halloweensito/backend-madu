@@ -1,4 +1,4 @@
-package com.Osiris.backendMadu.DTO;
+package com.Osiris.backendMadu.DTO.Attribute;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

@@ -1,6 +1,6 @@
 package com.Osiris.backendMadu.Controller;
 
-import com.Osiris.backendMadu.DTO.*;
+import com.Osiris.backendMadu.DTO.Product.*;
 import com.Osiris.backendMadu.Service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +40,13 @@ public class ProductController {
     }
 
 
+
     @GetMapping("/category/{slug}")
-    public ResponseEntity<List<ProductResponse>> getByCategorySlug(@PathVariable String slug) {
-        return ResponseEntity.ok(productService.findByCategorySlug(slug));
+    public ResponseEntity<Page<ProductResponse>> getByCategorySlug(
+            @PathVariable String slug,
+            @PageableDefault(size = 12) Pageable pageable
+    ) {
+        return ResponseEntity.ok(productService.findByCategorySlug(slug, pageable));
     }
 
 

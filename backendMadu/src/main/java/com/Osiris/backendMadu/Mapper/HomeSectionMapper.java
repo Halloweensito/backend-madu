@@ -1,9 +1,9 @@
 package com.Osiris.backendMadu.Mapper;
 
 
-import com.Osiris.backendMadu.DTO.HomeSectionItemResponse;
-import com.Osiris.backendMadu.DTO.HomeSectionRequest;
-import com.Osiris.backendMadu.DTO.HomeSectionResponse;
+import com.Osiris.backendMadu.DTO.HomeSection.HomeSectionItemResponse;
+import com.Osiris.backendMadu.DTO.HomeSection.HomeSectionRequest;
+import com.Osiris.backendMadu.DTO.HomeSection.HomeSectionResponse;
 import com.Osiris.backendMadu.Entity.HomeSection;
 import com.Osiris.backendMadu.Entity.HomeSectionItem;
 import org.mapstruct.Mapper;

@@ -28,6 +28,9 @@ public class SecurityConfig {
     @Value("${cors.allowed-origins}")
     private List<String> allowedOrigins;
 
+    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
+    private String jwkSetUri;
+
     // ----------------------------
     // Seguridad HTTP principal
     // ----------------------------
@@ -39,11 +42,18 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Rutas admin protegidas
+                        .requestMatchers("/api/admin/pages/**").authenticated() // <--- NUEVO
                         .requestMatchers("/api/products/admin/**").authenticated()
                         .requestMatchers("/api/categories/admin/**").authenticated()
                         .requestMatchers("/api/home/admin").authenticated()
+                        .requestMatchers("/api/site-settings/admin/**").authenticated()
+                        .requestMatchers("/api/admin/footer-sections/**").authenticated()
+                        .requestMatchers("/api/admin/footer-links/**").authenticated()
+                        .requestMatchers("/api/admin/orders/**").authenticated()
 
                         // Rutas públicas
+                        .requestMatchers(HttpMethod.POST, "/api/public/orders").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/public/pages/**").permitAll() // <--- NUEVO
                         .requestMatchers(HttpMethod.GET, "/api/products/store/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/search").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/category/**").permitAll()
@@ -51,13 +61,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/categories/store/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/slug/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/home/store").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/site-settings/store").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/public/footer/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
 
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                        ));
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
         return http.build();
     }
@@ -78,7 +89,6 @@ public class SecurityConfig {
         return source;
     }
 
-
     // ----------------------------
     // Roles desde app_metadata.roles
     // ----------------------------
@@ -96,7 +106,7 @@ public class SecurityConfig {
     @Bean
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder
-                .withJwkSetUri("https://zlhzxveqleycwyssdtio.supabase.co/auth/v1/.well-known/jwks.json")
+                .withJwkSetUri(jwkSetUri)
                 .jwsAlgorithm(SignatureAlgorithm.ES256)
                 .build();
     }

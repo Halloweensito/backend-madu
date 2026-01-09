@@ -1,6 +1,7 @@
 package com.Osiris.backendMadu.Mapper;
 
-import com.Osiris.backendMadu.DTO.*;
+import com.Osiris.backendMadu.DTO.Category.*;
+import com.Osiris.backendMadu.DTO.Product.UpdateCategoryRequest;
 import com.Osiris.backendMadu.Entity.Category;
 import com.Osiris.backendMadu.Entity.Status;
 import org.mapstruct.Mapper;

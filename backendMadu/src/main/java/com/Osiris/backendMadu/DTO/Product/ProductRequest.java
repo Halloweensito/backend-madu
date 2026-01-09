@@ -1,7 +1,6 @@
-package com.Osiris.backendMadu.DTO;
+package com.Osiris.backendMadu.DTO.Product;
 
 import com.Osiris.backendMadu.Entity.Status;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -25,7 +24,6 @@ public class ProductRequest {
     @Positive(message = "El ID de categoría debe ser positivo")
     private Long categoryId;
 
-    @Valid
     private List<ImageRequest> generalImages;
 
     private List<ProductVariantRequest> variants;

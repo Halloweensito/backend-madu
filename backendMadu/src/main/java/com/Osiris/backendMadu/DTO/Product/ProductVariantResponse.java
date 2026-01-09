@@ -1,5 +1,6 @@
-package com.Osiris.backendMadu.DTO;
+package com.Osiris.backendMadu.DTO.Product;
 
+import com.Osiris.backendMadu.DTO.AttributeValue.AttributeValueResponse;
 import lombok.Data;
 
 import java.math.BigDecimal;

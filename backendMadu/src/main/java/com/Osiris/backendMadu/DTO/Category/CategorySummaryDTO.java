@@ -1,4 +1,4 @@
-package com.Osiris.backendMadu.DTO;
+package com.Osiris.backendMadu.DTO.Category;
 
 import lombok.Data;
 

@@ -1,6 +1,6 @@
 package com.Osiris.backendMadu.Service;
 
-import com.Osiris.backendMadu.DTO.ProductVariantRequest;
+import com.Osiris.backendMadu.DTO.Product.ProductVariantRequest;
 import com.Osiris.backendMadu.Entity.AttributeValue;
 import com.Osiris.backendMadu.Entity.Image;
 import com.Osiris.backendMadu.Entity.Product;

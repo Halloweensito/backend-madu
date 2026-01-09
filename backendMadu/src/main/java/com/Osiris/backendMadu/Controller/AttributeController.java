@@ -1,6 +1,12 @@
 package com.Osiris.backendMadu.Controller;
 
-import com.Osiris.backendMadu.DTO.*;
+import com.Osiris.backendMadu.DTO.Attribute.AttributeResponse;
+import com.Osiris.backendMadu.DTO.Attribute.CreateAttributeRequest;
+import com.Osiris.backendMadu.DTO.Attribute.UpdateAttributeRequest;
+import com.Osiris.backendMadu.DTO.AttributeValue.AttributeValueResponse;
+import com.Osiris.backendMadu.DTO.AttributeValue.CreateAttributeValueRequest;
+import com.Osiris.backendMadu.DTO.AttributeValue.UpdateAttributeValueRequest;
+import com.Osiris.backendMadu.DTO.Product.ReorderIds;
 import com.Osiris.backendMadu.Service.AttributeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

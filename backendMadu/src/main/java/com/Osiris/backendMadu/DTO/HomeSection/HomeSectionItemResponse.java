@@ -1,6 +1,8 @@
-package com.Osiris.backendMadu.DTO;
+package com.Osiris.backendMadu.DTO.HomeSection;
 
 
+import com.Osiris.backendMadu.DTO.Category.CategorySummaryDTO;
+import com.Osiris.backendMadu.DTO.Product.ProductSummaryDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 

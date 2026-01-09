@@ -1,8 +1,8 @@
 package com.Osiris.backendMadu.Controller;
 
-import com.Osiris.backendMadu.DTO.HomeSectionRequest;
-import com.Osiris.backendMadu.DTO.HomeSectionResponse;
-import com.Osiris.backendMadu.DTO.ReorderRequest;
+import com.Osiris.backendMadu.DTO.HomeSection.HomeSectionRequest;
+import com.Osiris.backendMadu.DTO.HomeSection.HomeSectionResponse;
+import com.Osiris.backendMadu.DTO.Product.ReorderRequest;
 import com.Osiris.backendMadu.Service.HomeSectionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

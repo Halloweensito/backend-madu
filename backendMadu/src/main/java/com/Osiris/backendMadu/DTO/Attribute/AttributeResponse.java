@@ -1,5 +1,6 @@
-package com.Osiris.backendMadu.DTO;
+package com.Osiris.backendMadu.DTO.Attribute;
 
+import com.Osiris.backendMadu.DTO.AttributeValue.AttributeValueResponse;
 import com.Osiris.backendMadu.Entity.AttributeType;
 import lombok.Data;
 

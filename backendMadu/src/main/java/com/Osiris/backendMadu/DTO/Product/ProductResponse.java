@@ -1,5 +1,6 @@
-package com.Osiris.backendMadu.DTO;
+package com.Osiris.backendMadu.DTO.Product;
 
+import com.Osiris.backendMadu.DTO.Category.CategoryResponse;
 import com.Osiris.backendMadu.Entity.Status;
 import lombok.Data;
 

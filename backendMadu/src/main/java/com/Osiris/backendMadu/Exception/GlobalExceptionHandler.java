@@ -1,6 +1,6 @@
 package com.Osiris.backendMadu.Exception;
 
-import com.Osiris.backendMadu.DTO.ErrorResponse;
+import com.Osiris.backendMadu.DTO.Product.ErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;

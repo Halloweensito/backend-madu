@@ -1,9 +1,9 @@
 package com.Osiris.backendMadu.Mapper;
 
-import com.Osiris.backendMadu.DTO.AttributeValueResponse;
-import com.Osiris.backendMadu.DTO.ImageResponse;
-import com.Osiris.backendMadu.DTO.ProductVariantRequest;
-import com.Osiris.backendMadu.DTO.ProductVariantResponse;
+import com.Osiris.backendMadu.DTO.AttributeValue.AttributeValueResponse;
+import com.Osiris.backendMadu.DTO.Product.ImageResponse;
+import com.Osiris.backendMadu.DTO.Product.ProductVariantRequest;
+import com.Osiris.backendMadu.DTO.Product.ProductVariantResponse;
 import com.Osiris.backendMadu.Entity.AttributeValue;
 import com.Osiris.backendMadu.Entity.Image;
 import com.Osiris.backendMadu.Entity.ProductVariant;

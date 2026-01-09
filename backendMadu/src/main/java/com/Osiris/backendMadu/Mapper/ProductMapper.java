@@ -1,8 +1,8 @@
 package com.Osiris.backendMadu.Mapper;
 
-import com.Osiris.backendMadu.DTO.ProductRequest;
-import com.Osiris.backendMadu.DTO.ProductResponse;
-import com.Osiris.backendMadu.DTO.ProductSummaryDTO;
+import com.Osiris.backendMadu.DTO.Product.ProductRequest;
+import com.Osiris.backendMadu.DTO.Product.ProductResponse;
+import com.Osiris.backendMadu.DTO.Product.ProductSummaryDTO;
 import com.Osiris.backendMadu.Entity.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

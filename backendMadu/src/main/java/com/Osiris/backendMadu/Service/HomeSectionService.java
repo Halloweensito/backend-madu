@@ -1,9 +1,9 @@
 package com.Osiris.backendMadu.Service;
 
-import com.Osiris.backendMadu.DTO.HomeSectionItemRequest;
-import com.Osiris.backendMadu.DTO.HomeSectionRequest;
-import com.Osiris.backendMadu.DTO.HomeSectionResponse;
-import com.Osiris.backendMadu.DTO.ReorderRequest;
+import com.Osiris.backendMadu.DTO.HomeSection.HomeSectionItemRequest;
+import com.Osiris.backendMadu.DTO.HomeSection.HomeSectionRequest;
+import com.Osiris.backendMadu.DTO.HomeSection.HomeSectionResponse;
+import com.Osiris.backendMadu.DTO.Product.ReorderRequest;
 import com.Osiris.backendMadu.Entity.Category;
 import com.Osiris.backendMadu.Entity.HomeSection;
 import com.Osiris.backendMadu.Entity.HomeSectionItem;

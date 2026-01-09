@@ -1,4 +1,4 @@
-package com.Osiris.backendMadu.DTO;
+package com.Osiris.backendMadu.DTO.Product;
 
 import com.Osiris.backendMadu.Entity.Status;
 import jakarta.validation.constraints.NotBlank;

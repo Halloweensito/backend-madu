@@ -1,16 +1,17 @@
-package com.Osiris.backendMadu.DTO;
+package com.Osiris.backendMadu.DTO.Category;
 
 import com.Osiris.backendMadu.Entity.Status;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class CategoryTreeAdminDTO {
+public class CategoryResponse {
     private Long id;
     private String name;
     private String slug;
+    private String description;
     private String imageUrl;
     private Status status;
-    private List<CategoryTreeAdminDTO> children;
+    private int sortOrder;
+    private Long parentId;
+    private String parentName;
 }

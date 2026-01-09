@@ -1,9 +1,9 @@
 package com.Osiris.backendMadu.Service;
 
-import com.Osiris.backendMadu.DTO.ImageRequest;
-import com.Osiris.backendMadu.DTO.ProductRequest;
-import com.Osiris.backendMadu.DTO.ProductResponse;
-import com.Osiris.backendMadu.DTO.ProductVariantRequest;
+import com.Osiris.backendMadu.DTO.Product.ImageRequest;
+import com.Osiris.backendMadu.DTO.Product.ProductRequest;
+import com.Osiris.backendMadu.DTO.Product.ProductResponse;
+import com.Osiris.backendMadu.DTO.Product.ProductVariantRequest;
 import com.Osiris.backendMadu.Entity.*;
 import com.Osiris.backendMadu.Mapper.ProductMapper;
 import com.Osiris.backendMadu.Repository.CategoryRepository;
@@ -71,7 +71,7 @@ public class ProductService {
         return products.map(productMapper::toDto);
     }
 
-    public List<ProductResponse> findByCategorySlug(String slug) {
+    public Page<ProductResponse> findByCategorySlug(String slug, Pageable pageable) {
         // 1. Buscamos la categoría principal
         Category rootCategory = categoryRepository.findBySlugAndStatus(slug, Status.ACTIVE)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found with slug: " + slug));
@@ -79,10 +79,9 @@ public class ProductService {
         // 2. Recolectamos el ID de esa categoría Y de todos sus hijos/nietos
         List<Long> allCategoryIds = getAllCategoryIdsRecursively(rootCategory);
 
-        return productRepository.findAllByCategoryIdInAndStatus(allCategoryIds, Status.ACTIVE, Pageable.unpaged())
-                .stream()
-                .map(productMapper::toDto) // o toProductResponse si ese es el nombre
-                .toList();
+        // 3. Pasamos el 'pageable' al repositorio y mapeamos el resultado sin usar stream() ni toList()
+        return productRepository.findAllByCategoryIdInAndStatus(allCategoryIds, Status.ACTIVE, pageable)
+                .map(productMapper::toDto);
     }
 
     private List<Long> getAllCategoryIdsRecursively(Category category) {
