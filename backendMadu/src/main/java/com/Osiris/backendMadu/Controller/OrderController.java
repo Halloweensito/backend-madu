@@ -4,9 +4,7 @@ import com.Osiris.backendMadu.DTO.Order.OrderFilterRequest;
 import com.Osiris.backendMadu.DTO.Order.OrderRequest;
 import com.Osiris.backendMadu.DTO.Order.OrderResponse;
 import com.Osiris.backendMadu.DTO.Order.OrderSummaryResponse;
-import com.Osiris.backendMadu.Entity.Order;
 import com.Osiris.backendMadu.Entity.OrderStatus;
-import com.Osiris.backendMadu.Mapper.OrderMapper;
 import com.Osiris.backendMadu.Service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,27 +21,23 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     private final OrderService orderService;
-    private final OrderMapper orderMapper;
 
     // ===================== PUBLIC =====================
-
     @PostMapping("/public/orders")
     public ResponseEntity<OrderResponse> createOrder(
             @Valid @RequestBody OrderRequest request
     ) {
-        Order order = orderService.createOrder(request);
-        // Aquí sí mapeamos manualmente porque createOrder devuelve la Entidad
-        return ResponseEntity.ok(orderMapper.toResponse(order));
+        // El servicio ya devuelve el DTO listo, el controlador solo lo pasa.
+        // Código mucho más limpio.
+        return ResponseEntity.ok(orderService.createOrder(request));
     }
 
-    // ===================== ADMIN =====================
+// ===================== ADMIN =====================
 
-
-    // TE FALTABA ESTE ENDPOINT (Ver detalle de una orden)
     @GetMapping("/admin/orders/{id}")
     public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long id) {
-        Order order = orderService.findById(id);
-        return ResponseEntity.ok(orderMapper.toResponse(order));
+        // Igual aquí: el servicio se encargó de buscar y mapear.
+        return ResponseEntity.ok(orderService.findById(id));
     }
 
     @PatchMapping("/admin/orders/{id}/status")

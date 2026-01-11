@@ -1,8 +1,9 @@
 package com.Osiris.backendMadu.Entity;
 
 public enum OrderStatus {
-    SENT,       // enviado a WhatsApp
+    PENDING,       // enviado a WhatsApp
     CONFIRMED,  // confirmado por chat
+    SHIPPED,
     CANCELLED,
     COMPLETED
 }

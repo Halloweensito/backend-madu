@@ -43,8 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Rutas admin protegidas
                         .requestMatchers("/api/admin/pages/**").authenticated() // <--- NUEVO
-                        .requestMatchers("/api/products/admin/**").authenticated()
-                        .requestMatchers("/api/categories/admin/**").authenticated()
+
                         .requestMatchers("/api/home/admin").authenticated()
                         .requestMatchers("/api/site-settings/admin/**").authenticated()
                         .requestMatchers("/api/admin/footer-sections/**").authenticated()
@@ -63,6 +62,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/home/store").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/site-settings/store").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/public/footer/**").permitAll()
+                        .requestMatchers("/api/products/admin/**").authenticated()
+                        .requestMatchers("/api/categories/admin/**").authenticated()
                         .requestMatchers("/actuator/health").permitAll()
 
                         .anyRequest().authenticated())

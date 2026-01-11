@@ -1,9 +1,6 @@
 package com.Osiris.backendMadu.Service;
 
-import com.Osiris.backendMadu.DTO.Order.OrderFilterRequest;
-import com.Osiris.backendMadu.DTO.Order.OrderItemRequest;
-import com.Osiris.backendMadu.DTO.Order.OrderRequest;
-import com.Osiris.backendMadu.DTO.Order.OrderSummaryResponse; // <--- Importante
+import com.Osiris.backendMadu.DTO.Order.*;
 import com.Osiris.backendMadu.Entity.*;
 import com.Osiris.backendMadu.Mapper.OrderMapper; // <--- Importante
 import com.Osiris.backendMadu.Repository.OrderRepository;
@@ -12,7 +9,6 @@ import com.Osiris.backendMadu.Repository.ProductVariantRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,20 +31,31 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final ProductVariantRepository variantRepository;
-    private final OrderMapper orderMapper; // <--- 1. Inyectamos el Mapper
+    private final OrderMapper orderMapper;
 
-    // ================= CREACIÓN DE ORDEN =================
-    public Order createOrder(OrderRequest request) {
-        Order order = new Order();
+    // Cambiamos el retorno a OrderResponse para devolver el DTO completo
+    public OrderResponse createOrder(OrderRequest request) {
+
+        // 1. Usamos el Mapper para crear la estructura base con los datos del Request
+        // (Copia automáticamente: customerName, phone, note, address, paymentMethod, shippingMethod, etc.)
+        Order order = orderMapper.toEntity(request);
+
+        // 2. Seteamos los datos de sistema (que no vienen del usuario)
         order.setOrderNumber(generateOrderNumber());
-        order.setStatus(OrderStatus.SENT);
-        order.setCustomerName(request.customerName());
-        order.setCustomerPhone(request.customerPhone());
-        order.setCustomerNote(request.customerNote());
+        order.setStatus(OrderStatus.PENDING);
+
+        // Nota: Si usas @CreationTimestamp en la entidad, esta línea no es necesaria.
+        // Si prefieres control manual, déjala:
         order.setCreatedAt(LocalDateTime.now());
+
+        // Inicializamos la lista por si el mapper la dejó nula
+        if (order.getItems() == null) {
+            order.setItems(new ArrayList<>());
+        }
 
         BigDecimal subtotal = BigDecimal.ZERO;
 
+        // 3. Procesamos los Items (Lógica de negocio compleja)
         for (OrderItemRequest itemReq : request.items()) {
             if (itemReq.quantity() <= 0) {
                 throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
@@ -57,14 +64,8 @@ public class OrderService {
             Product product = productRepository.findById(itemReq.productId())
                     .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado ID: " + itemReq.productId()));
 
-            OrderItem item = new OrderItem();
-            item.setOrder(order);
-            item.setProductId(product.getId());
-            item.setProductName(product.getName());
-            item.setQuantity(itemReq.quantity());
-
+            // --- Lógica de Variante ---
             ProductVariant variant;
-
             if (itemReq.variantId() != null) {
                 variant = variantRepository.findById(itemReq.variantId())
                         .orElseThrow(() -> new EntityNotFoundException("Variante no encontrada ID: " + itemReq.variantId()));
@@ -85,8 +86,13 @@ public class OrderService {
             }
             variant.setStock(variant.getStock() - itemReq.quantity());
             variantRepository.save(variant);
-            // ------------------------
 
+            // --- Creación del Item ---
+            OrderItem item = new OrderItem();
+            item.setOrder(order); // Vinculación bidireccional importante
+            item.setProductId(product.getId());
+            item.setProductName(product.getName());
+            item.setQuantity(itemReq.quantity());
             item.setVariantId(variant.getId());
             item.setSku(variant.getSku());
             item.setPrice(variant.getPrice());
@@ -98,20 +104,15 @@ public class OrderService {
             order.getItems().add(item);
         }
 
+        // 4. Totales finales
         order.setSubtotal(subtotal);
-        order.setTotal(subtotal);
+        order.setTotal(subtotal); // Aquí podrías sumar costos de envío si tuvieras lógica para ello
 
-        return orderRepository.save(order);
+        // 5. Guardar y Retornar DTO
+        Order savedOrder = orderRepository.save(order);
+        return orderMapper.toResponse(savedOrder);
     }
 
-    // ================= ADMIN: LISTAR (SOLUCIONADO) =================
-    @Transactional(readOnly = true)
-    // 2. Cambiamos el retorno a Page<OrderSummaryResponse> para evitar LazyInitializationException
-    public Page<OrderSummaryResponse> findAll(Pageable pageable) {
-        Page<Order> orders = orderRepository.findAll(pageable);
-        // La conversión se hace AQUÍ, mientras la conexión a la BD sigue abierta
-        return orders.map(orderMapper::toSummaryResponse);
-    }
 
     // ================= ADMIN: ACTUALIZAR ESTADO =================
     public void updateStatus(Long id, OrderStatus newStatus) {
@@ -134,16 +135,13 @@ public class OrderService {
         orderRepository.save(order);
     }
 
-    // ================= BUSCAR POR ID =================
-    public Order findById(Long id) {
+    public OrderResponse findById(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Orden no encontrada ID: " + id));
 
-        // 3. Truco para forzar la carga de los items antes de cerrar la transacción
-        // Esto evita que falle cuando el Controller intente leer los items
-        Hibernate.initialize(order.getItems());
-
-        return order;
+        // Al llamar al mapper dentro de la transacción (@Transactional del servicio),
+        // Hibernate carga los items automáticamente sin necesidad de "Hibernate.initialize()".
+        return orderMapper.toResponse(order);
     }
 
 

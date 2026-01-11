@@ -38,6 +38,21 @@ public class Order {
     @Column(length = 500)
     private String customerNote;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ShippingMethod shippingMethod;
+
+    @Column(length = 500)
+    private String shippingAddress; // calle + número + ciudad
+
+    @Column(length = 500)
+    private String shippingNote; // referencias, indicaciones, comentarios
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentMethod paymentMethod;
+
+
     @Column(nullable = false)
     private BigDecimal subtotal;
 

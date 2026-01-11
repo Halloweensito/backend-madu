@@ -34,6 +34,10 @@ public interface FooterLinkRepository extends JpaRepository<FooterLink, Long> {
     """)
     List<FooterLink> findAllForAdmin();
 
+    void deleteByPageId(Long pageId);
+
+    void deleteBySectionId(Long sectionId);
+
     /* ===== Helpers para Reordenamiento ===== */
 
     List<FooterLink> findBySectionIdOrderByPositionAsc(Long sectionId);

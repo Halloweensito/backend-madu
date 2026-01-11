@@ -1,6 +1,9 @@
 package com.Osiris.backendMadu.DTO.Order;
 
 import com.Osiris.backendMadu.Entity.OrderStatus;
+import com.Osiris.backendMadu.Entity.PaymentMethod;
+import com.Osiris.backendMadu.Entity.ShippingMethod;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,6 +15,10 @@ public record OrderResponse(
         String customerName,
         String customerPhone,
         String customerNote,
+        ShippingMethod shippingMethod,
+        String shippingAddress,
+        String shippingNote,
+        PaymentMethod paymentMethod,
         BigDecimal subtotal,
         BigDecimal total,
         LocalDateTime createdAt,

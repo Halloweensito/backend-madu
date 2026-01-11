@@ -5,6 +5,7 @@ import com.Osiris.backendMadu.DTO.PageContent.PageContentRecord;
 import com.Osiris.backendMadu.DTO.PageContent.PublicPageContent;
 import com.Osiris.backendMadu.Entity.PageContent;
 import com.Osiris.backendMadu.Mapper.PageContentMapper;
+import com.Osiris.backendMadu.Repository.FooterLinkRepository;
 import com.Osiris.backendMadu.Repository.PageContentRepository;
 import com.Osiris.backendMadu.Utils.SlugGenerator;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,6 +23,7 @@ public class PageContentService {
     private final PageContentRepository repository;
     private final PageContentMapper mapper;
     private final SlugGenerator slugGenerator;
+    private final FooterLinkRepository footerLinkRepository;
 
     /* =======================================================
        MÉTODOS PÚBLICOS (Para la Web)
@@ -137,6 +139,8 @@ public class PageContentService {
         if (!repository.existsById(id)) {
             throw new EntityNotFoundException("No se puede eliminar. Página no encontrada ID: " + id);
         }
+
+        footerLinkRepository.deleteByPageId(id);
         repository.deleteById(id);
     }
 }
