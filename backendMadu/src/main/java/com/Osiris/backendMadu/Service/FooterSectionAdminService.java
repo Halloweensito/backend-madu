@@ -4,6 +4,7 @@ import com.Osiris.backendMadu.DTO.Section.FooterSectionAdmin;
 import com.Osiris.backendMadu.DTO.Section.FooterSectionRequest;
 import com.Osiris.backendMadu.Entity.FooterSection;
 import com.Osiris.backendMadu.Mapper.FooterSectionMapper;
+import com.Osiris.backendMadu.Repository.FooterLinkRepository;
 import com.Osiris.backendMadu.Repository.FooterSectionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class FooterSectionAdminService {
 
     private final FooterSectionRepository sectionRepository;
     private final FooterSectionMapper sectionMapper;
+    private final FooterLinkRepository footerLinkRepository;
 
     @Transactional(readOnly = true)
     public List<FooterSectionAdmin> findAll() {
@@ -68,10 +70,12 @@ public class FooterSectionAdminService {
     }
 
     public void delete(Long id) {
-        // Es buena práctica verificar antes de borrar para dar feedback claro
         if (!sectionRepository.existsById(id)) {
             throw new EntityNotFoundException("Sección no encontrada");
         }
+
+        footerLinkRepository.deleteBySectionId(id);
+
         sectionRepository.deleteById(id);
     }
 
