@@ -129,7 +129,12 @@ public class ProductService {
 
 
         if (request.getVariants() == null || request.getVariants().isEmpty()) {
-
+            if (request.getPrice() == null || request.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new IllegalStateException("Price is required for products without variants");
+            }
+            if (request.getStock() == null || request.getStock() < 0) {
+                throw new IllegalStateException("Stock is required for products without variants");
+            }
             ProductVariantRequest defaultVariant = new ProductVariantRequest();
             defaultVariant.setPrice(request.getPrice());
             defaultVariant.setStock(request.getStock());
@@ -152,6 +157,13 @@ public class ProductService {
             savedProduct.getVariants().add(variant);
         } else {
             for (ProductVariantRequest variantReq : request.getVariants()) {
+                if (variantReq.getPrice() == null || variantReq.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                    throw new IllegalStateException("Variant price must be greater than 0");
+                }
+                if (variantReq.getStock() == null || variantReq.getStock() < 0) {
+                    throw new IllegalStateException("Variant stock must be zero or greater");
+                }
+
                 ProductVariant variant = variantService.createVariant(savedProduct, variantReq);
                 savedProduct.getVariants().add(variant);
             }

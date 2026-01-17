@@ -29,9 +29,6 @@ public class ProductRequest {
     private List<ProductVariantRequest> variants;
 
     private Status status;
-    @PositiveOrZero(message = "El stock no puede ser negativo")
     private Integer stock;
-
-    @Positive(message = "El precio debe ser mayor a 0")
     private BigDecimal price;
 }
